@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  web:
+    image: "kingmoh/k8sfrontend"
+    container_name: 'react-frontend'
+    ports:
+      - '8080:80'
+      
+  backend:
+    image: "kingmoh/k8sbackend"
+    container_name: 'react-backend'
+    ports:
+      - '2005:2005'
+    links:
+      - mongo
+
+    networks:
+      - backend
+
+  mongo:
+    image: mongo
+    container_name: 'k8sdb'
+    ports:
+      - '27017:27017'
+    # environment:
+    #   MONGO_INITDB_DATABASE: names
+    #   MONGO_INITDB_ROOT_USERNAME: babok
+    #   MONGO_INITDB_ROOT_PASSWORD: babok24
+    volumes:
+      # - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - data:/data/db
+    networks:
+      - backend
+    
+networks: 
+  backend: 
+    driver: "bridge"
+
+volumes:
+  data:
